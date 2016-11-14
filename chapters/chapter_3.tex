@@ -1,0 +1,32 @@
+%======================================================================
+\chapter{Scope and Objectives}
+%======================================================================
+\section{Scope of this Research Work}
+
+In recent years, wafers for solar cells are being produced by wire sawing of directionally solidified mc-Si ingots. The wafers produced this way have two issues. 1. Loss of efficiency due to presence of defects such as dislocation, impurity atoms and grain boundary. 2. Warpage due to thermoplastic deformation during wire sawing and the presence of initial residual stress in the work piece i.e. directionally solidified mc-Si ingots.
+
+Over the years, a number of finite element models have been developed for predicting dislocation growth and residual stress during DS process of mc-Si. These models take into account the various dislocation kinetics models of silicon. When it comes to wire sawing, however, there are limited finite element models available for predicting warpage and reisudal stress. For thermal simulation, the only finite element model developed is by Bhagavat and Kao \cite{} and for stress simulation, there are only analytical models derived from the work of Moller et al \cite{}. The goal of this work is do simulate warpage in wafers as-cut from directionally solidified ingots. To perform such simulation a finite element model is developed both for DS process and wire sawing process with the later taking the results of the former as initial conditions.
+
+
+\section{Objective of this Research Work}
+This research work, as shown in Figure \ref{fig:objective}, is done in three steps
+\newline
+(1). Thermal and stress simulation of DS process.
+\newline
+(2). Post processing and mapping of the results from above simulations on a wire sawing simulation mesh.
+\newline
+(3). Thermal and stress simulation of wire sawing process.
+\newline
+\newline
+\noindent
+\begin{minipage}[c]{\textwidth}
+\centering
+        \captionsetup{type=figure}
+        \includegraphics[width=4.0in]{flowchart.png}
+        \captionof{figure}{Overview of the simulations}
+        \label{fig:objective}
+ \end{minipage}
+ 
+ \section{Limitations}
+ 
+There are some limitation to this work. In this modelling, effect of grain boundary and impurities are not considered. Also slipping on multiple plane is not considered and an insotopic J2 plasiticity model has been developed. the In wire sawing simulation, fracture mechanics due to interaction between the abrasives \& the ingots and hydrodynamics between slurry and abrasives has not been considered. The fracture strength of wafer based on the surface crack density, also based on Weibull modulus, is not reviewed. The only properties studied in the final wafer is the warpage and the residual stress. 

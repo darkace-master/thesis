@@ -1,0 +1,83 @@
+\maketitle                      %% Mandatory
+\begin{abstract}                %% Mandatory -  maximum 350 words
+  The \texttt{genthesis.cls} \LaTeX{} class file and accompanying
+  documents, such as this sample thesis, are distributed in the hope
+  that it will be useful but without any warranty (without even the
+  implied warranty of fitness for a particular purpose).  For a
+  description of this file's purpose, and instructions on its use, see
+  below.
+
+  These files are distributed under the GPL which should be included
+  here in the future.  Please let the author know of any changes or
+  improvements that should be made.
+
+  Michael Forbes.
+  mforbes@physics.ubc.ca
+\end{abstract}
+
+\chapter{Preface} % Manditory if any of the conditions are met
+
+You must include a preface if any part of your research was partly or
+wholly published in articles, was part of a collaboration, or required
+the approval of UBC Research Ethics Boards.
+
+The Preface must include the following:
+
+\begin{itemize}
+\item A statement indicating the relative contributions of all
+  collaborators and co-authors of publications (if any), emphasizing
+  details of your contribution, and stating the proportion of research
+  and writing conducted by you.
+\item A list of any publications arising from work presented in the
+  dissertation, and the chapter(s) in which the work is located.
+\item The name of the particular UBC Research Ethics Board, and the
+  Certificate Number(s) of the Ethics Certificate(s) obtained, if
+  ethics approval was required for the research.
+\end{itemize}
+
+%%% Sections and subsections etc. in the Preface should in general
+%%% not be listed in the table of contents, so use the starred form
+%%% of \section etc.
+\section*{Examples}
+
+
+
+
+Note that this preface must come before the table of contents.  Note
+also that this section ``Examples'' should not be listed in the table
+of contents, so we have used the starred form: \verb|\section*{Example}|.
+
+\tableofcontents                %% Mandatory
+\listoftables                   %% Mandatory if thesis has tables
+\listoffigures                  %% Mandatory if thesis has figures
+\listof{Program}{List of Programs} %% Optional
+%% Any other lists should come here, i.e.
+%% Abbreviation schemes, definitions, lists of formulae, list of
+%% schemes, glossary, list of symbols etc.
+
+\chapter{Acknowledgements}      %% Optional
+This is the place to thank professional colleagues and people who have
+given you the most help during the course of your graduate work.
+
+\chapter{Dedication} %% Optional
+The dedication is usually quite short, and is a personal rather than
+an academic recognition.  The \emph{Dedication} does not have to be
+titled, but it must appear in the table of contents.  If you want to
+skip the chapter title but still enter it into the Table of Contents,
+use this command \verb|\chapter[Dedication]{}|.
+
+Note that this section is the last of the preliminary pages (with
+lowercase Roman numeral page numbers).  It must be placed
+\emph{before} the \verb|\mainmatter| command.  After that, Arabic
+numbered pages will begin.
+
+% Any other unusual prefactory material should come here before the
+% main body.
+
+% Now regular page numbering begins.
+\mainmatter
+
+% Parts are the largest structural units, but are optional.
+%\part{Thesis}
+
+% Chapters are the next main unit.
