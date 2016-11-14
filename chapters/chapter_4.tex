@@ -112,7 +112,7 @@ This cooling scheme is a very lose approximation of the real cooling phenomenon 
 \end{figure}
 
 \subsubsection{Wire Sawing}
-The aanalysis domain for wire sawing model was a circular volume with diameter 250 \SI{}{mm} and height 1500 \SI{}{\micro.m}. The goal was to determine the amount of warpage and dislocation density in as-cut Si wafers taken from different heights along the ingot. The wire sawing simulations were performed on three different locations within the casting: 26.25, 52.5, and 79.75 \SI{}{mm} from the base of the ingot. The reason for performing the analysis on these sections instead of the whole ingot was to minimize computational cost and time. The caveat of this approach is the need to correctly map stress, strain and dislocation density from the casting model onto these sections. The first step was to map the stress, displacement, and dislocation density fields from the results of the casting simulation as initial conditions. Once mapped, the next steps were to perform the thermal and mechanical simulations. For all the three sections, only a single thermal model was built because it was assumed that the temperature profile while multi-wire sawing does not vary along the axis of the ingot. The mechanical models were built separately for these three sections, and applied the temperature results from the thermal simulation as a pre-existing field. The time for wire sawing was taking as 500 minutes since, industrially, this is the time that it takes for multi-wire sawing of Si ingots.  
+The analysis domain for wire sawing model was a circular volume with diameter 250 \SI{}{mm} and height 1500 \SI{}{\micro.m}. The goal was to determine the amount of warpage and dislocation density in as-cut Si wafers taken from different heights along the ingot. The wire sawing simulations were performed on three different locations within the casting: 26.25, 52.5, and 79.75 \SI{}{mm} from the base of the ingot. The reason for performing the analysis on these sections instead of the whole ingot was to minimize computational cost and time. The caveat of this approach is the need to correctly map stress, strain and dislocation density from the casting model onto these sections. The first step was to map the stress, displacement, and dislocation density fields from the results of the casting simulation as initial conditions. Once mapped, the next steps were to perform the thermal and mechanical simulations. For all the three sections, only a single thermal model was built because it was assumed that the temperature profile while multi-wire sawing does not vary along the axis of the ingot. The mechanical models were built separately for these three sections, and applied the temperature results from the thermal simulation as a pre-existing field. The time for wire sawing was taking as 500 minutes since, industrially, this is the time that it takes for multi-wire sawing of Si ingots.  
 
 An axisymmetric mesh could not be used for modelling wire sawing because it is not a symmetric operation. A special type of mesh, as shown in Figure \ref{fig:wiresawing-mesh}, was constructed by writing a script in PYTHON. This mesh had parallel lines perpendicular to the feed movement direction. This meshing was used to simulate a material removal pattern with wire movement from the entry point to the exit point. Note that, this mesh is still an approximation to wire sawing since in reality the wire bows while slicing. This mesh had 9608 nodes and 6903 elements with 8 nodes per element for both the thermal and stress models. The 3D diffusive heat transfer DC3D8 and continuum C3D8 elements were used for the thermal and mechanical model respectively.
 
@@ -170,7 +170,7 @@ The thermal properties of liquid and solid silicon, required for performing the 
     \label{table:thermal-prop-3}
 \end{table}
 
-Silicon has a unique liquid-solid density change property, unlike other elements, as liquid silicon is denser than solid silicon meaning that solid Si has the potential to float during solidification. However, for this analysis, this material behavior is ignored to reduce complexity. The variation in density with temperature for solid Si is also ignored because adding that feature to the model would change the mass balance of the system.
+Silicon has a unique liquid-solid density change property, unlike other elements, as liquid silicon is denser than solid silicon meaning that solid Si has the potential to float during solidification. However, for this analysis, this material behavior is ignored to reduce complexity. The variation in density with temperature for solid Si is also ignored because adding that feature to the model would change the mass balance of the system. If there is no mass leaving or entering the domain, then a change in density means a change in volume. To accommodate this volume change the meshing needs to change. In order to prevent this complexity, density is assumed constant. 
 
 
 
@@ -202,12 +202,12 @@ The mechanical properties required for performing the stress finite element anal
 
 \subsubsection{Coefficient of thermal expansion:}
 
-If coefficient of thermal expansion is a function of temperature or field variables, then the total thermal expansion coefficients at various temperature is required in tabular format as input in ABAQUS along with the reference temperature as shown in eq \ref{thermalExp}.
+If coefficient of thermal expansion is a function of temperature or field variables, then the total thermal expansion coefficients at various temperature is required in tabular format as input in ABAQUS along with the reference temperature as shown in eq \ref{thermalExp},
 \begin{equation}
 \alpha(T) = \frac{1}{T-T^{0}}\int_{T^{0}}^{T} {\alpha}'(T)dT
 \label {thermalExp}
 \end{equation}
-where, $\alpha$ is the effective thermal expansion, ${\alpha}'$ is the temperature dependent thermal expansion coefficient and $T^{0}$ is the a reference point specifying the critical temperature where the material can assume zero thermal strain. $T^{0}$ was taken as 1683K since in molten form there is no strain. The total thermal expansion $\alpha$ can be imagined as the average rate of change of length with temperature rather than instantaneous rate of change.  
+where $\alpha$ is the effective thermal expansion, ${\alpha}'$ is the temperature dependent thermal expansion coefficient and $T^{0}$ is the a reference point specifying the critical temperature where the material can assume zero thermal strain. $T^{0}$ was taken as 1683K since in molten form there is no strain. The total thermal expansion $\alpha$ can be imagined as the average rate of change of length with temperature rather than instantaneous rate of change.  
 
 \subsubsection{Elastic modulus:}
 
@@ -215,28 +215,38 @@ The elastic modulus is a function of temperature changing from 91 GPa at room te
 
 \subsubsection{Stress – Strain data:}
 
-As shown in SEC X.X, there are a lot of existing literature on stress-strain characteristics of silicon under tension at various temperatures. In this analysis elastic-creep behavior is considered. The inelastic deformation occurs to compensate for the movement and multiplication of dislocation. Rate dependent plastic behavior and yielding are not considered.
+As shown in Section X.X, there are a lot of existing literature on stress-strain characteristics of pure silicon under tension at various temperatures. In this analysis elastic-creep behavior is considered. The inelastic deformation occurs to compensate for the movement and multiplication of dislocation. The yielding of pure silicon depends on strain-rate, as discussed in the literature review. However, this strain-rate dependence of deformation is neglected in this simulation. Yield point and plastic strain are not separately provided to ABAQUS, and all the inelastic deformation is assumed to come from dislocation creep inelastic deformation.  
 
 
 \section{Initial \& Boundary Conditions}
 
 
 \subsection{Casting: Thermal Model}
-Thermal initial conditions were specified for the ingot. All the nodes were set to 1773 K, which is the temperature till which silicon is heated in the furnace before the solidification process starts. 
-Thermal boundary conditions were placed on all edges of the mesh shown in Figure The edge BC \& CD are assumed to be insulted. Heat is exiting from the ingot by convection through the bottom edge AB. Dirichlet boundary condition is applied to nodes on AB to simulate cooling rates of 2, 5 and 8 K/Min. This was implemented by creating a surface film in ABAQUS to facilitate surface convection. The sink temperature of this film was changed at 2, 5 and 8 K/Min and the film coefficient was assigned a large value so that the nodes at surface AB cool at the same rate as the sink. This cooling boundary condition is applied because in this work there is no experimental cooling curve data and the of value of natural surface convection coefficient $h$ in Equation () is not known. 
+Thermal initial conditions were specified for the ingot. All the nodes were set to 1773 K, which is the temperature till which silicon is heated in the furnace before the solidification process starts. Thermal boundary conditions were placed on edges AB, BC \& CD of the mesh shown in Figure \ref{fig:casting-mesh} to mimic the heat flow of the real furnace.
+
+In directional solidification furnace, the side walls are insulated to ensure that heat flow only in one direction which leads to directional crystal growth. In absence of side wall insulation, the ingot contains smaller equiaxed grains instead of larger columnar grains, having greater grain boundary area. So, an insulation is important. The insulation, however, is not always adiabatic and some heat escapes from the side walls. Although, in this simulation, the heat flow from side walls i.e. edges BC \& CD are ignored. Apart from the side walls, heat flow by radiation from the top and the bottom surface is also ignored.
+
+The only form in which heat is assumed to escape from the ingot is through natural surface convection from the bottom surface AB. The directional furnace has a mechanism to change and control the convective heat transfer coefficient from the bottom surface. This mechanism gives a better heat flow control to the manufacturers while producing mc-Si ingots to improve grain property. While simulating a directional solidification process, the heat transfer coefficient with time data is required to correctly model this process. Heat transfer coefficient is calculated by collecting temperature-time data at various location using thermocouple and then applying inverse methods such as Zhang \textit{et al} \cite{zhang2014development}. For this work, however, there was no experimental data available. So a constant cooling rate of 2, 5 and 8 K/Min was prescribed as a boundary condition on the bottom surface AB. The logic behind this over-simplification was that it served two purpose, first, a starting point to build a model in which heat transfer coefficient can be supplied in future, and second, study the effects of slow, medium and fast cooling by assuming an overall average rate of cooling.
+
+Dirichlet boundary condition was applied to the nodes on AB to simulate cooling rates of 2, 5 and 8 K/Min. This was implemented by creating a surface film in ABAQUS to facilitate surface convection. The sink temperature of this film was changed at 2, 5 and 8 K/Min and the film coefficient was assigned a large value so that the nodes at surface AB cool at the same rate as the sink. This ensured that the bottom surface nodes cooled at the prescribed cooling rates.
 
 \subsection{Casting: Displacement Model}
 
 %\subsubsection{Initial Conditions}
-A dislocation density of $10^8$ \SI{}{m^{-2}} is supplied as the initial field condition for all the nodes in the displacement model. Initially there is no elastic or plastic strain is present in the ingot. So no initial stress or strain is applied. Predefined temperature field is supplied using *TEMPERATURE in ABAQUS to read the temperature data from the thermal model. At all the increments the temperature data from the thermal model output database is read and subjected as temperature to calculate the thermal strain.
+A dislocation density of $10^4$ \SI{}{m^{-2}} was supplied as the initial dislocation field condition for all the nodes in the displacement model. This was done because initially dislocations are assumed to be present in the ingot homogeneously with a particular density. Mc-Si ingots are observed to have an initial homogeneous dislocation density of $10^4-10^{5}$ \SI{}{m^{-2}} \cite{nakano2011numerical}, hence this was chosen as an initial condition.
+
+Initially there is no elastic or plastic strain is present in the ingot. So no initial stress or strain is applied. Predefined temperature field is supplied using *TEMPERATURE in ABAQUS to read the temperature data from the thermal model. At all the increments the temperature data from the thermal model output database is read and subjected as pre-existing temperature fields to calculate the thermal strain.
 
 %\subsubsection{Boundary Conditions}
-Mechanical boundary conditions are applied at the nodes on the side DA. All the nodes are constrained to move in Y direction only. The bottom most node is pinned to ensure that the center of the bottom of the ingot is always touching the crucible. All the other nodes are having all degree of freedoms for movement. Since the ingot remains inside the crucible at all times so the nodes on BC should be partially constrained to not move radially outwards. But in this case it is known that silicon contracts during cooling, so mechanical boundary conditions are not supplied on the nodes on BC.
+Mechanical boundary conditions were supplied to ensure that the nodes on the edges move within the physical movement space available during the solidification process. The nodes on the BC cannot move outwards, but since it is known that silicon contracts during solidification, nodes on edge BC were not constrained mechanically. The node at A was mechanically pinned to ensure that atleast one point on the edge AB stays in contact with the bottom and leaving other nodes on edge AB free to move. 
+
+In ABAQUS, while using an axisymmetric mesh, mechanical boundary conditions have to be separately applied on the edge along the symmetry axis which is DA in this case. By the virtue of its location, the nodes on the edge DA can only move in the vertical direction Y in the physical space. So an anti-symmetry boundary conditions along Y direction was supplied to the nodes on DA which constrained them to move only in the Y direction. All the other nodes were having all degree of freedoms for movement. 
+
 
 \subsection{Wire Sawing: Thermal Model}
 
 %\subsubsection{Initial Conditions}
-Initial temperature of 298 K is applied to all the nodes of the wire sawing mesh because the ingot is initially at room temperature. 
+Initial temperature of 298 \SI{}{K} is applied to all the nodes of the wire sawing mesh because the ingot is initially at room temperature. 
 
 %\subsubsection{Boundary Conditions}
 
@@ -251,29 +261,21 @@ Initial temperature of 298 K is applied to all the nodes of the wire sawing mesh
         \label{fig:wiresawing-crossection}
  \end{minipage}
 \subsubsection{Heat Flux}
-The most important aspect of thermal modelling of wire-sawing is to the determine the heat flux entering the work piece from the wire and the heat exiting from the new surface formed due to surface convection. Heat flux entering inside the ingot depends upon several factors including wire and slurry parameters. An analytical model has been developed by Bhagwat and Kao [ref] to model this heat flux as a function of power supplied to the wiresaw machine $P$ (\SI{}{W.m^{-2}}), area being machined $A$ (\SI{}{m^{2}}) and a dimensionless quantity $\epsilon$ representing the fraction of power transferred from that is actually being used for slicing.
-
+The most important aspect of thermal modelling of wire-sawing is to the determine the heat flux entering the work piece from the wire and the heat exiting from the new surface formed due to surface convection. Heat flux entering inside the ingot depends upon several factors including wire and slurry parameters. An analytical model has been developed by Bhagwat and Kao \cite{bhagavat2008finite} to model this heat flux as a function of power supplied to the wiresaw machine $P$ (\SI{}{W.m^{-2}}), area being machined $A$ (\SI{}{m^{2}}) and a dimensionless quantity $\epsilon$ representing the fraction of power transferred from that is actually being used for slicing,
 \begin{equation}
 Q = \frac{\epsilon P}{A}
    \label {wire_eq1}
 \end{equation}
-
-
-The power $P$ can be further expressed as 
-
-
 \begin{equation}
 P = Tv
    \label {wire_eq2}
 \end{equation}
-
-Where $T$ is the tension set in the wire during slicing, $v$ is the velocity of the wire during sawing. The area being machined can be expressed as
-
+where $T$ (\SI{}{N}) is the tension set in the wire during slicing, $v$ (\SI{}{m.s^{-1}}) is the velocity of the wire during sawing. The area being machined can be expressed as,
 \begin{equation}
 A = \pi R L
    \label {wire_eq3}
 \end{equation}
-Where R is the radius of the groove formed during slicing, L is the contact span. Contact span is the length of wire in contact with the ingot as shown in Figure \ref{fig:wiresawing-crossection}. The dimensionless quantity $\epsilon$ is a function of angle $\alpha$ that it makes with the horizontal axis because of bowing while slicing. The force exerted by the wire can be resolved into horizontal and vertical component. The vertical component of the tension in the is assumed to be responsible for the slicing and can be expressed as $T \sin (\alpha)$. As discussed in Sec. 2.4, the elasto-hydrostatic pressure while wire sawing is a function of contact span length L. Thus, taking these two factors into consideration, the dimensionless constant $\epsilon$ can be defined as 
+where R (\SI{}{m}) is the radius of the groove formed during slicing, L (\SI{}{m}) is the contact span. Contact span is the length of wire in contact with the ingot as shown in Figure \ref{fig:wiresawing-crossection}. The dimensionless quantity $\epsilon$ is a function of bow angle $\alpha$ that the wire makes with the horizontal axis because of bowing while slicing. The force exerted by the wire can be resolved into horizontal and vertical component. The vertical component of the tension in is assumed to be responsible for the slicing and can be expressed as $T \sin (\alpha)$. As discussed in Sec. 2.4, the wire pressure while wire sawing is a function of contact span length L. Thus, taking these two factors into consideration, the dimensionless constant $\epsilon$ can be defined as 
 \begin{equation}
 \epsilon = \sin(\alpha) \times L
    \label {wire_eq4}
@@ -295,9 +297,7 @@ The flux entering also depends on the length of heat source $l_{s}$ i.e. , as sh
 \subsubsection{Natural Convection}
 During wire sawing simulation, new surface is created at each step of the model. All surfaces that are exposed to the air during slicing, including the newly formed surfaces, are to be applied with natural convection boundary condition. 
 
-Silicon surface has a natural convection coefficient of $h = 5$ \SI{}{W.m^{-2}.K^{-1}} [ref]. But this value can’t be used for the newly formed wafer surfaces. The newly formed wafer surfaces on the work piece is analogous to equally spaced fins, the length which corresponds to the wafer length at a given distance from the feed and height corresponds to the distance from the feed reference. 
-
-The case of natural convection in a Fin has been studied by several researchers [ref-ref]. Harahap and McManus [ref] experimentally found out that convection coefficient decreased rapidly on increase of fin length. Jones and Smith [ref] found out that height of the fin has negligible impact on the convection coefficient of the fin. Chen et al [ref] have analytically solved for convection heat transfer coefficient for a circular annular fin and found it to be a decreasing with decrease in radial distance. For this simulation convection coefficient data is taken from Bhavwat and Kao [ref] which is shown in Figure \ref{fig:wiresaw-h}.  At the cutting position near the feed reference, convection coefficient is 5 \SI{}{W.m^{-2}.K^{-1}} and at the center of ingot it is 0.5 \SI{}{W.m^{-2}.K^{-1}}.
+Silicon surface has a natural convection coefficient of $h = 5$ \SI{}{W.m^{-2}.K^{-1}} \cite{bhagavat2008finite}. But this value can’t be used for the newly formed wafer surfaces. The newly formed wafer surfaces on the work piece is analogous to equally spaced fins, the length of which corresponds to the wafer length at a given distance from the feed and height corresponds to the distance from the feed reference. Harahap and McManus \cite{harahap1967natural} experimentally found out that convection coefficient decreased rapidly on increase of fin length. Jones and Smith \cite{jones1970optimum} found out that height of the fin has negligible impact on the convection coefficient of the fin. For this simulation convection coefficient data is taken from Bhagavat and Kao \cite{bhagavat2008finite} which is shown in Figure \ref{fig:wiresaw-h}.  At the cutting position near the feed reference, convection coefficient is 5 \SI{}{W.m^{-2}.K^{-1}} and at the center of ingot it is 0.5 \SI{}{W.m^{-2}.K^{-1}}.
 
 \noindent
 \begin{minipage}[c]{\textwidth}
@@ -311,10 +311,12 @@ The case of natural convection in a Fin has been studied by several researchers 
 \subsection{Wire Sawing: Displacement Model}
 
 %\subsubsection{Initial Conditions}
-Stress, strain and dislocation density results from the casting displacement model are supplied as initial condition for the wire sawing displacement model. Similarly to the casting displacement model, temperature was taken from the wire sawing thermal model at each step using *TEMPERATURE in ABAQUS.  
+Stress, strain and dislocation density results from the casting displacement model are required as initial condition for the wire sawing displacement model. During the mapping of results from the casting mesh onto wire sawing mesh, it was found that dislocation field was not mapped correctly. So, instead, a mode value of dislocation density was obtained from the casting simulation result and used as the initial dislocation density of during wire sawing. The logic here was that, this will give the maximum possible wafer warpage since low dislocation density ingot would warp more. 
+
+Similar to the casting displacement model, temperature was taken from the wire sawing thermal model at each step using *TEMPERATURE in ABAQUS as pre-existing temperature value.  
 %\subsubsection{Boundary Conditions}
 
-The mechanical boundary conditions supplied were pinning of nodes at the point where the wire leaves the work piece. This was done because the wafers need to be in fixed contact with some point during the sawing process. 
+The mechanical boundary conditions supplied were pinning of nodes at the point where the wire leaves the work piece. This was done because the work piece is glued to a substrate holder at this end during the sawing process. 
 
 %Nodes on the surface W1 and W2 where mechanically pinned. This was done because of the way the stress and the strain were mapped from the ingot to the wafer submodel. This will be discussed in more detail while explaining the implementation details of this model in SEC X.X. 
 
